@@ -1,4 +1,4 @@
-# digitalbanking Card Microservice
+# digitalbanking Transfer Microservice
 Digital Banking Training
 
 We are in the process of dockerizing this.

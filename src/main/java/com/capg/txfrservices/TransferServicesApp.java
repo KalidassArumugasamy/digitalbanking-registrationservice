@@ -1,4 +1,4 @@
-package com.capg.cardservices;
+package com.capg.txfrservices;
 
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -14,17 +14,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-public class CardServicesApp extends SpringBootServletInitializer {
+public class TransferServicesApp extends SpringBootServletInitializer {
 
-	private static Logger log = Logger.getLogger(CardServicesApp.class);
+	private static Logger log = Logger.getLogger(TransferServicesApp.class);
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(CardServicesApp.class);
+		return application.sources(TransferServicesApp.class);
 	}
 
 	public static void main(String[] args) {
 		log.info("Entering Main logger enabled");
-		SpringApplication.run(CardServicesApp.class, args);
+		SpringApplication.run(TransferServicesApp.class, args);
 	}
 }

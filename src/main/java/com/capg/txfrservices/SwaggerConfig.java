@@ -1,4 +1,4 @@
-package com.capg.cardservices;
+package com.capg.txfrservices;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
