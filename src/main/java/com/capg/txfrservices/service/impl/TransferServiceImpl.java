@@ -44,7 +44,7 @@ public class TransferServiceImpl implements TransferService {
 	@Value("${max.recent.transactions}")
 	private Integer maxRecentTransactions;
 	
-	@Transactional(rollbackFor=Exception.class, propagation = Propagation.NESTED)
+	@Transactional(rollbackFor=Exception.class)
 	public String payCreditCardBill(CCPaymentData ccp) {
 		
 		boolean transactionStatus;
@@ -53,15 +53,11 @@ public class TransferServiceImpl implements TransferService {
 		if(transactionStatus)
 		{
 			logger.info("InitiateCCPaymentTransaction Method Success: Payment Initiated.");
-			transactionStatus = DebitSavingsAccountforCCPayment(ccp); // Step 2: Debit Savings Account for Paying Credit Card.
+			transactionStatus = doCCPaymentTransaction(ccp); // Step 2: Debit Savings Account and Credit Credit Card Account for Paying Credit Card.
 				if(transactionStatus)
 				{
-					logger.info("DebitSavingsAccountforCCPayment Method Success: Savings Account Debited for Credit Card Payment.");
-					transactionStatus = CreditCardAccountforCCPayment(ccp); // Step 3: Credit your Credit Card Account with the paid Amount.
-						if(transactionStatus)
-						{
-							logger.info("CreditCardAccountforCCPayment: Method Success: Credit Card Account Credited for Credit Card Bill");
-							transactionID = CompleteCCPaymentTransaction(ccp); // Step 4: Complete the Transaction and log the DB and Send back the Final Response to UI.
+					logger.info("doCCPaymentTransaction Method Success: Savings Account Debited and Credit Card Account Credited for Credit Card Payment.");
+					transactionID = CompleteCCPaymentTransaction(ccp); // Step 3: Complete the Transaction and log the DB and Send back the Final Response to UI.
 								if(!transactionID.equalsIgnoreCase("Failed"))
 								{
 									logger.info("CompleteCCPaymentTransaction Method Success: Payment Successfully Completed");
@@ -71,17 +67,11 @@ public class TransferServiceImpl implements TransferService {
 								{
 									logger.info("CompleteCCPaymentTransaction Method Failed: Payment Failed.");
 									return "Failed";
-								}
-						}
-						else
-						{
-							logger.info("CreditCardAccountforCCPayment: Method Failed: Credit Card Account NOT Credited for Credit Card Bill");
-							return "Failed";
-						}						
+								}									
 				}
 				else
 				{
-					logger.info("DebitSavingsAccountforCCPayment Method Failed: Savings Account NOT Debited for Credit Card Payment.");
+					logger.info("DebitSavingsAccountforCCPayment Method Failed: Savings Account NOT Debited OR Credit Card NOT Credited for Credit Card Payment.");
 					return "Failed";
 				}	
 						
@@ -140,76 +130,38 @@ public class TransferServiceImpl implements TransferService {
 				}			
 	}
 	
-	private boolean DebitSavingsAccountforCCPayment(CCPaymentData ccp)
+	private boolean doCCPaymentTransaction(CCPaymentData ccp)
 		{
-					// Rest Template Code to Call REST API from another REST API(from JAVA).
-		
-		
-				MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-				String s= Integer.toString(ccp.getSavingsDetailsAccountNo());
-				String s2 = Double.toString(ccp.getTransferredAmount());
-				System.out.println("Cast Output:"+s+","+s2);
-				map.add("SavingsAccountNo", s);
-				map.add("DebitAmount", s2);
 							
-				
+				MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+				String savingsAccountNo= Integer.toString(ccp.getSavingsDetailsAccountNo());
+				String transferredAmount = Double.toString(ccp.getTransferredAmount());
+				String creditCardNo = Long.toString(ccp.getCardDetailsCardNo());								
+				map.add("SavingsAccountNo", savingsAccountNo);
+				map.add("DebitAmount", transferredAmount);
+				map.add("CreditCardNo", creditCardNo);
+				map.add("CreditAmount", transferredAmount);
+											
 				RestTemplate restTemplate = new RestTemplate();
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 				
 				HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map , headers);
 				System.out.println("Going to call...");
-				ResponseEntity<String> loginResponse = restTemplate
-						  .exchange("http://mydigitalbanking.com:8090/accservices/testaccountwithdraw", HttpMethod.POST, entity, String.class);
+				ResponseEntity<String> loginResponse = restTemplate.exchange("http://mydigitalbanking.com:8090/accservices/testaccountwithdraw", HttpMethod.POST, entity, String.class);
 				
-							if (loginResponse.getStatusCode() == HttpStatus.OK) {
-							  System.out.println("Success...Success...Success!!!");
-							  System.out.println(loginResponse.getBody());
-							  return true;
-							}else
-							{
-								return false;
-							}
-			//Rest Template Code to Call REST API from another REST API(from JAVA).
-						
-		
-		
+				if (loginResponse.getStatusCode() == HttpStatus.OK) 
+					{
+					  System.out.println("Savings Account Debit and CC Account Credit Complete!, ");
+					  System.out.println(loginResponse.getBody());
+					  return true;
+					}
+				else
+					{
+					  return false;
+					}	
 }
-	
-	private boolean CreditCardAccountforCCPayment(CCPaymentData ccp)
-	{
-		// Rest Template Code to Call REST API from another REST API(from JAVA).
 		
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-		String s= Long.toString(ccp.getCardDetailsCardNo());
-		String s2 = Double.toString(ccp.getTransferredAmount());
-		System.out.println("Cast Output:"+s+","+s2);
-		map.add("CreditCardNo", s);
-		map.add("CreditAmount", s2);
-					
-		
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		
-		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map , headers);
-		System.out.println("Going to call...CC");
-		ResponseEntity<String> loginResponse = restTemplate
-				  .exchange("http://mydigitalbanking.com:8100/cardservices/payCreditCardBill", HttpMethod.POST, entity, String.class);
-		
-				if (loginResponse.getStatusCode() == HttpStatus.OK) {
-				  System.out.println("Success...Success...Success!!!");
-				  System.out.println(loginResponse.getBody());
-				  return true;
-				}else
-				{
-					return false;
-				}
-		}
-			//Rest Template Code to Call REST API from another REST API(from JAVA).
-					
-	
-	
 	private String CompleteCCPaymentTransaction(CCPaymentData ccp)
 		{
 			System.out.println("CC Transaction Completion Module: "+ccp);
