@@ -40,7 +40,7 @@ public class TransferServicesController {
 		
 	//Safe Bill Payment Module with Sensitive info as JSON. Recommended for Bills.
 		@CrossOrigin(origins = "http://mydigitalbanking.com")
-		@RequestMapping(value="/CreditCardPaymentservices/payCreditCardBill",method = RequestMethod.PUT)
+		@RequestMapping(value="/txfrservices/payCreditCardBill",method = RequestMethod.PUT)
 		public String payCreditCardBill(@RequestBody CCPaymentData ccp) {
 			System.out.println("REQUEST MAPPED INSIDE CONTROLLER" +ccp);
 			String transactionId = transferService.payCreditCardBill(ccp);				
