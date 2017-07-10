@@ -1,4 +1,4 @@
-package com.capg.txfrservices;
+package com.capg.registrationservices;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

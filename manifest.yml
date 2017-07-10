@@ -1,7 +1,0 @@
-applications:
-- name: digitalbanking-cardsservice
-  services:
-  - carddb
-Manifest-Version: 1.0
-Sealed: true
-Main-Class: main.java.com.capg.cardservices.App
