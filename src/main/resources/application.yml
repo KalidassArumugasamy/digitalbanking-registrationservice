@@ -1,0 +1,33 @@
+---
+server:
+  port: 8130
+---
+spring:
+  profiles: default,local
+  jpa.show-sql : true
+  jpa.generate-ddl : true
+  datasource:
+   url : jdbc:postgresql://localhost:5432/db_account
+   username : postgres
+   password : admin
+   driverClassName : org.postgresql.Driver
+   testWhileIdle : true
+   validationQuery : SELECT 1
+max:
+ recent:
+  transactions : 10
+---
+spring:
+  profiles: docker
+  jpa.show-sql : true
+  jpa.generate-ddl : true
+  datasource:
+   url : jdbc:postgresql://192.168.99.100:5432/db_account
+   username : postgres
+   password : postgres
+   driverClassName : org.postgresql.Driver
+   testWhileIdle : true
+   validationQuery : SELECT 1
+max:
+ recent:
+  transactions : 10

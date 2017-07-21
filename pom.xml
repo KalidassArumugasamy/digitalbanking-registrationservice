@@ -2,13 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.capg.txfrservices</groupId>
-	<artifactId>txfrservices</artifactId>
+	<groupId>com.capgemini.dbt</groupId>
+	<artifactId>registrationservices</artifactId>
 	<version>1.0</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
-	<name>Transfer Services</name>
-	<description>Transfer Services</description>
+	<name>Registration Services</name>
+	<description>Registration Services</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -16,8 +16,8 @@
 		<version>1.4.1.RELEASE</version>
 	</parent>
 	<properties>
-		<start-class>com.capg.txfrservices.TransferServicesApp</start-class>
-		<env>docker</env>
+		<start-class>com.capg.registrationservices.RegistrationServicesApp</start-class>
+		<env>local</env>
 	</properties>
 
 	<dependencies>

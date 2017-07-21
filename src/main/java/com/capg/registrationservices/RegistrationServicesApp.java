@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAutoConfiguration
 @EnableRabbit
 @EnableScheduling
+@SpringBootApplication
 public class RegistrationServicesApp extends SpringBootServletInitializer implements RabbitListenerConfigurer{
 
 	private static Logger log = Logger.getLogger(RegistrationServicesApp.class);
